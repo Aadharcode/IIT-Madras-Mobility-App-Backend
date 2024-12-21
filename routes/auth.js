@@ -120,7 +120,7 @@ authRouter.get("/profile", JWTAuthenticator, async (req, res) => {
 authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
   try {
     const { category, residenceType } = req.body;
-    const userId = req.user.id; // Extract user ID from the JWT token
+    const userId =  req.userId; // Extract user ID from the JWT token
 
     // Validate the inputs
     if (!category || !residenceType) {
