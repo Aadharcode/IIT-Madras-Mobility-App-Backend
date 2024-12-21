@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const fetch = require("node-fetch");
 const User = require("../models/user");
+const JWTAuthenticator = require("../controllers/auth");
 require("dotenv").config();
 
 const authRouter = express.Router();
@@ -95,6 +96,55 @@ authRouter.get("/users", async (req, res) => {
     res.status(200).json(users);
   } catch (err) {
     console.error("Get Users Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+authRouter.get("/profile", JWTAuthenticator, async (req, res) => {
+  try {
+    const userId = req.userId; // Extract user ID from token
+    const user = await User.findById(userId); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Return the specific user data
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Get User Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+})
+
+authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
+  try {
+    const { category, residenceType } = req.body;
+    const userId = req.user.id; // Extract user ID from the JWT token
+
+    // Validate the inputs
+    if (!category || !residenceType) {
+      return res.status(400).json({ msg: "Category and residenceType are required" });
+    }
+
+    // Find the user by ID and update their profile
+    let user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Update the user's profile fields
+    user.category = category;
+    user.residenceType = residenceType;
+
+    // Save the updated user data
+    user = await user.save();
+
+    // Return the updated user profile
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error("Profile Update Error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });

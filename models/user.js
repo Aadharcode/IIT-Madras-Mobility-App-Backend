@@ -7,6 +7,18 @@ const userSchema = mongoose.Schema({
     minlength: 2,
     trim: true, 
   },
+  catehory: {
+    //required: true,
+    type: String,
+    minlength: 2,
+    trim: true, 
+  },
+  residentType: {
+    //required: true,
+    type: String,
+    minlength: 2,
+    trim: true, 
+  },
   number : {
       required: true,
       type: Number,
