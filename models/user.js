@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
     minlength: 2,
     trim: true, 
   },
-  catehory: {
+  category: {
     //required: true,
     type: String,
     minlength: 2,
