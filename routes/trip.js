@@ -8,7 +8,7 @@ const tripRouter = express.Router();
 
 tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
     try {
-        const {startTime, endTime, startMonumentId, endMonumentId, monuments,purpose,mode} = req.body;
+        const {startTime, endTime, monuments,purpose,mode} = req.body;
         const userId = req.userId;
         //validate user id
         const validUser = await User.findById(userId);
@@ -30,8 +30,6 @@ tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
             userId,
             startTime,
             endTime,
-            startMonumentId,
-            endMonumentId,
             monuments, // Array of valid Monument IDs
             purpose,
             mode

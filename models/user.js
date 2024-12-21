@@ -2,7 +2,19 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
   name: {
-    //required: true,
+    required: false,
+    type: String,
+    minlength: 2,
+    trim: true, 
+  },
+  category: {
+    required: false,
+    type: String,
+    minlength: 2,
+    trim: true, 
+  },
+  residenceType: {
+    required: false,
     type: String,
     minlength: 2,
     trim: true, 
