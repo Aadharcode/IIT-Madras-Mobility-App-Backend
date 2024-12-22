@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
-const Monument = require('../models/monument'); // Assuming you have a Monument model
+const Monument = require('../models/monument');
 
 const monumentRouter = express.Router();
 
@@ -24,7 +24,7 @@ monumentRouter.post('/populate', upload.single('file'), async (req, res) => {
             try {
                 await Monument.deleteMany({});
                 await Monument.insertMany(monuments);
-                fs.unlinkSync(req.file.path); // Remove the uploaded file
+                fs.unlinkSync(req.file.path);
                 res.status(200).send('Monuments populated successfully.');
             } catch (error) {
                 res.status(500).send('Error populating monuments: ' + error.message);

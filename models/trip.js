@@ -8,6 +8,18 @@ const tripSchema = new Schema({
         ref: 'Monument',
         required: true
     }],
+    
+    startMonumentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Monument',
+        required: false, // Optional, if needed
+      },
+      endMonumentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Monument',
+        required: false, // Optional, if needed
+      },
+    
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -20,6 +32,14 @@ const tripSchema = new Schema({
     mode:{
         type: String,
         required: false,
+    },
+    startTime: {
+        type: Date,
+        required: true
+    },
+    endTime: {
+        type: Date,
+        required: true
     }
 }, {
     timestamps: true

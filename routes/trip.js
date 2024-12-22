@@ -1,8 +1,9 @@
 const express = require('express');
-const Trip = require('../models/trip'); // Assuming you have a Trip model
-const Monument = require('../models/monument'); // Assuming you have a Monument model
-const User = require('../models/user'); // Assuming you have a User model
+const Trip = require('../models/trip'); 
+const Monument = require('../models/monument'); 
+const User = require('../models/user');
 const JWTAuthenticator = require('../controllers/auth');
+const { format } = require('fast-csv');
 
 const tripRouter = express.Router();
 
@@ -56,7 +57,45 @@ tripRouter.get('/user',JWTAuthenticator,async (req, res) => {
 tripRouter.get('/all', async (req, res) => {
     try {
         const trips = await Trip.find();
-        res.status(200).json(trips);
+
+        const updatedTrips = await Promise.all(
+            trips.map(async (trip) => {
+                const user = await User.findById(trip.userId);
+                let tripMonuments = [trip.startMonumentId,...trip.monuments,trip.endMonumentId];
+                const monuments = await Monument.find({ _id: { $in: tripMonuments } });
+                let monumentNames =  monuments.map(monument => monument.name);
+                let returnTrip = {user: user.name,number: user.number,monuments:monumentNames,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
+                return returnTrip;
+            })
+        );
+        
+        res.status(200).json(updatedTrips);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching trips', error });
+    }
+});
+
+// Endpoint to fetch all trips as CSV
+tripRouter.get('/getData', async (req, res) => {
+    try {
+        const trips = await Trip.find();
+
+        const updatedTrips = await Promise.all(
+            trips.map(async (trip) => {
+                const user = await User.findById(trip.userId);
+                let tripMonuments = [trip.startMonumentId,...trip.monuments,trip.endMonumentId];
+                const monuments = await Monument.find({ _id: { $in: tripMonuments } });
+                let monumentNames =  monuments.map(monument => monument.name);
+                let returnTrip = {user: user.name,number: user.number,monuments:monumentNames,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
+                return returnTrip;
+            })
+        );
+        res.setHeader('Content-Disposition', 'attachment; filename="trips.csv"');
+        res.setHeader('Content-Type', 'text/csv');
+        const csvStream = format({ headers: true });
+        csvStream.pipe(res);
+        updatedTrips.forEach(trip => csvStream.write(trip));
+        csvStream.end();
     } catch (error) {
         res.status(500).json({ message: 'Error fetching trips', error });
     }
