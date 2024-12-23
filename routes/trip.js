@@ -9,7 +9,7 @@ const tripRouter = express.Router();
 
 tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
     try {
-        const {startTime, endTime, startMonumentId, endMonumentId, monuments,purpose,mode} = req.body;
+        const {startTime, endTime, startMonumentId, endMonumentId, monumentVisits,purpose,mode} = req.body;
         const userId = req.userId;
         //validate user id
         const validUser = await User.findById(userId);
@@ -17,8 +17,9 @@ tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
             return res.status(400).json({ message: 'User ID is invalid' });
         }
         
-        const monumentIds = monuments.map(monument => monument._id);
-
+        const monumentIds = monumentVisits.map(monumentVisit => monumentVisit.monument);
+        monumentIds.push(startMonumentId);
+        monumentIds.push(endMonumentId);
         // Validate that all monument IDs exist in the database
         const validMonuments = await Monument.find({ _id: { $in: monumentIds } });
         if (validMonuments.length !== monumentIds.length) {
@@ -33,7 +34,7 @@ tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
             endTime,
             startMonumentId,
             endMonumentId,
-            monuments, // Array of valid Monument IDs
+            monumentVisits,
             purpose,
             mode
         });
@@ -67,10 +68,14 @@ tripRouter.get('/all', async (req, res) => {
         const updatedTrips = await Promise.all(
             trips.map(async (trip) => {
                 const user = await User.findById(trip.userId);
-                let tripMonuments = [trip.startMonumentId,...trip.monuments,trip.endMonumentId];
+                let monumentsArray = trip.monumentVisits.map(monumentVisit => monumentVisit.monument);
+                let timeStampsArray = trip.monumentVisits.map(monumentVisit => monumentVisit.timestamp);
+                let tripMonuments = [trip.startMonumentId,...monumentsArray,trip.endMonumentId];
+                let timeStamps = [trip.startTime,...timeStampsArray,trip.endTime];
                 const monuments = await Monument.find({ _id: { $in: tripMonuments } });
                 let monumentNames =  monuments.map(monument => monument.name);
-                let returnTrip = {user: user.name,number: user.number,monuments:monumentNames,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
+                let monumentDetails = monumentNames.map((name, index) => `${name}(${timeStamps[index]})`).join(',');
+                let returnTrip = {user: user.name,number: user.number,monuments:monumentDetails,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
                 return returnTrip;
             })
         );
@@ -89,10 +94,14 @@ tripRouter.get('/getData', async (req, res) => {
         const updatedTrips = await Promise.all(
             trips.map(async (trip) => {
                 const user = await User.findById(trip.userId);
-                let tripMonuments = [trip.startMonumentId,...trip.monuments,trip.endMonumentId];
+                let monumentsArray = trip.monumentVisits.map(monumentVisit => monumentVisit.monument);
+                let timeStampsArray = trip.monumentVisits.map(monumentVisit => monumentVisit.timestamp);
+                let tripMonuments = [trip.startMonumentId,...monumentsArray,trip.endMonumentId];
+                let timeStamps = [trip.startTime,...timeStampsArray,trip.endTime];
                 const monuments = await Monument.find({ _id: { $in: tripMonuments } });
                 let monumentNames =  monuments.map(monument => monument.name);
-                let returnTrip = {user: user.name,number: user.number,monuments:monumentNames,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
+                let monumentDetails = monumentNames.map((name, index) => `${name}(${timeStamps[index]})`).join(',');
+                let returnTrip = {user: user.name,number: user.number,monuments:monumentDetails,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
                 return returnTrip;
             })
         );

@@ -4,10 +4,16 @@ const Schema = mongoose.Schema;
 
 // Define the schema for Trip
 const tripSchema = new Schema({
-  monuments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Monument', // Reference to Monument model
-    required: true
+  monumentVisits: [{
+    monument: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Monument',
+      required: true
+    },
+    timestamp: {
+      type: Date,
+      required: true
+    }
   }],
   startMonumentId: {
     type: mongoose.Schema.Types.ObjectId,
