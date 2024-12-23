@@ -9,35 +9,41 @@ const tripRouter = express.Router();
 
 tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
     try {
-        const {monuments,purpose,mode} = req.body;
+        const {startTime, endTime, startMonumentId, endMonumentId, monuments,purpose,mode} = req.body;
         const userId = req.userId;
-        if (!monuments || !Array.isArray(monuments) || monuments.length === 0) {
-            return res.status(400).json({ message: 'At least one monument is required' });
-        }
         //validate user id
         const validUser = await User.findById(userId);
         if (!validUser) {
             return res.status(400).json({ message: 'User ID is invalid' });
         }
+        
+        const monumentIds = monuments.map(monument => monument._id);
+
         // Validate that all monument IDs exist in the database
-        const validMonuments = await Monument.find({ _id: { $in: monuments } });
-        if (validMonuments.length !== monuments.length) {
+        const validMonuments = await Monument.find({ _id: { $in: monumentIds } });
+        if (validMonuments.length !== monumentIds.length) {
             return res.status(400).json({ message: 'Some monument IDs are invalid' });
         }
 
+        
         // Create a new trip
         const newTrip = new Trip({
             userId,
+            startTime,
+            endTime,
+            startMonumentId,
+            endMonumentId,
             monuments, // Array of valid Monument IDs
             purpose,
             mode
         });
-
+        
         // Save the trip to the database
         await newTrip.save();
 
         res.status(201).json({trip: newTrip });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Error adding trip', error: error.message });
     }
 });
