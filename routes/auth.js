@@ -18,7 +18,11 @@ const sendOtp = async (number) => {
   const data = await response.json();
   return data;}
   else{
-    return {Message:"Application in development mode use development OTP"};
+    return {
+      Status: "Success",
+      Details: "dev_session_123", // Providing a mock session ID
+      Message: "Application in development mode. Use OTP: 123456",
+    };
   }
 };
 

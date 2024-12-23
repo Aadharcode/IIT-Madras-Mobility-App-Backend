@@ -45,6 +45,10 @@ const tripSchema = new Schema({
   mode: {
     type: String,
     required: false, // Optional
+  },
+  occupancy: {
+    type: Number,
+    required: false, // Optional
   }
 }, {
   timestamps: true // Automatically add createdAt and updatedAt fields
