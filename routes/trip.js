@@ -39,11 +39,13 @@ tripRouter.post('/add',JWTAuthenticator,async (req, res) => {
             mode,
             occupancy
         });
+        console.log(newTrip);
         
         // Save the trip to the database
-        await newTrip.save();
+        let trip = await newTrip.save();
 
-        res.status(201).json({trip: newTrip });
+
+        res.status(201).json({trip: trip });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error adding trip', error: error.message });
