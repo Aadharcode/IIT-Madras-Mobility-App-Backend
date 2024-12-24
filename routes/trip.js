@@ -76,7 +76,8 @@ tripRouter.get('/all', async (req, res) => {
                 const monuments = await Monument.find({ _id: { $in: tripMonuments } });
                 let monumentNames =  monuments.map(monument => monument.name);
                 let monumentDetails = monumentNames.map((name, index) => `${name}(${timeStamps[index]})`).join(',');
-                let returnTrip = {user: user.name,number: user.number,monuments:monumentDetails,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
+                let occupany = trip.occupancy ? trip.occupancy : 'NA';
+                let returnTrip = {user: user.name,number: user.number,monuments:monumentDetails,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode,occupancy: occupany};
                 return returnTrip;
             })
         );
@@ -102,7 +103,8 @@ tripRouter.get('/getData', async (req, res) => {
                 const monuments = await Monument.find({ _id: { $in: tripMonuments } });
                 let monumentNames =  monuments.map(monument => monument.name);
                 let monumentDetails = monumentNames.map((name, index) => `${name}(${timeStamps[index]})`).join(',');
-                let returnTrip = {user: user.name,number: user.number,monuments:monumentDetails,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode};
+                let occupany = trip.occupancy ? trip.occupancy : 'NA';
+                let returnTrip = {user: user.name,number: user.number,monuments:monumentDetails,startTime: trip.startTime,endTime: trip.endTime,purpose: trip.purpose,mode: trip.mode,occupancy: occupany};
                 return returnTrip;
             })
         );
