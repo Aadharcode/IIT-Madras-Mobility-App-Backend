@@ -1,44 +1,64 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-  name: {
-    //required: true,
-    type: String,
-    minlength: 2,
-    trim: true, 
+  isAuthenticated: {
+    type: Boolean,
+    // required: true,
   },
-  category: {
-    //required: true,
+  phoneNumber: {
     type: String,
-    minlength: 2,
-    trim: true, 
+    required: true,
+    unique: true,
+    trim: true,
   },
-  residentType: {
-    //required: true,
+  userId: {
     type: String,
-    minlength: 2,
-    trim: true, 
+    required: true,
+    unique: true,
   },
-  number : {
-      required: true,
-      type: Number,
-      unique: true,
-      trim: true, 
-      // validate: {
-      //   validator: (value) => {
-      //     const numberString = value.toString();
-      //     if (numberString.length === 12 && numberString.startsWith("91")) {
-      //       // Ignore the first two digits (country code) if it's '91'
-      //       return /^[0-9]{10}$/.test(numberString.slice(2));
-      //     }
-      //     // Otherwise, ensure it is exactly 10 digits
-      //     return /^[0-9]{10}$/.test(numberString);
-      //   },
-      //   message: "Please enter a valid 10-digit mobile number",
-      // },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'nonBinary', 'noReveal'],
+    // required: true,
+  },
+  age: {
+    type: Number,
+    // required: true,
+  },
+  userCategory: {
+    type: String,
+    enum: ['student', 'employee', 'parent', 'relative'],
+    // required: true,
+  },
+  residenceType: {
+    type: String,
+    enum: ['onCampus', 'offCampus'],
+    // required: true,
+  },
+  employmentType: {
+    type: String,
+    enum: ['permanent', 'contract', 'intern'],
+    // required: true,
+  },
+  employmentCategory: {
+    type: String,
+    enum: ['technical', 'research', 'admin', 'school', 'other'],
+    // required: true,
+  },
+  childrenDetails: {
+    type: [Number],
+    default: [],
+  },
+  error: {
+    type: String,
+    default: null,
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
 }, { versionKey: false });
 
-  const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
-  module.exports = User;
+module.exports = User;
