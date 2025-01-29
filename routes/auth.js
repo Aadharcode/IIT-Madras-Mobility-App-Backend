@@ -128,19 +128,21 @@ authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
   console.log(req.body);
   try {
     const { 
-      isAuthenticated, 
-      phoneNumber, 
+      category, 
+      name,  
+      residentType, 
       gender, 
       age, 
-      userCategory, 
-      residenceType, 
       employmentType, 
       employmentCategory, 
-      childrenDetails, 
-      error, 
-      isLoading
-    } = req.body;
+      childrenDetails
+     } = req.body;
     const userId =  req.userId; // Extract user ID from the JWT token
+
+    // Validate the inputs
+    // if (!category || !residenceType) {
+    //   return res.status(400).json({ msg: "Category and residenceType are required" });
+    // }
 
     // Find the user by ID and update their profile
     let user = await User.findById(userId);
@@ -150,19 +152,22 @@ authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    // Update the user's profile fields if provided
-    if (isAuthenticated !== undefined) user.isAuthenticated = isAuthenticated;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
-    if (gender) user.gender = gender;
-    if (age !== undefined) user.age = age;
-    if (employmentType) user.employmentType = employmentType;
-    if (employmentCategory) user.employmentCategory = employmentCategory;
-    if (childrenDetails) user.childrenDetails = childrenDetails;
-    if (error) user.error = error;
-    if (isLoading !== undefined) user.isLoading = isLoading;
-    if (userCategory) user.userCategory = userCategory;
-    if (residenceType) user.residenceType = residenceType;
-
+    // Update the user's profile fields
+    // user.category = category;
+    // user.residentType = residenceType;
+    const updates = {};
+    if (name) updates.name = name;
+    if (category) updates.category = category;
+    if (residentType) updates.residentType = residentType;
+    if (gender) updates.gender = gender;
+    if (age !== undefined) updates.age = age;
+    if (employmentType) updates.employmentType = employmentType;
+    if (employmentCategory) updates.employmentCategory = employmentCategory;
+    if (childrenDetails) updates.childrenDetails = childrenDetails;
+    // if (number) updates.number = number; 
+    Object.keys(updates).forEach((key) => {
+      user[key] = updates[key];
+    });
     // Save the updated user data
     user = await user.save();
     console.log(user);
