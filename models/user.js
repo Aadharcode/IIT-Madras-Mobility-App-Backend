@@ -1,64 +1,71 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-  isAuthenticated: {
-    type: Boolean,
-    // required: true,
-  },
-  phoneNumber: {
+  name: {
+    //required: true,
     type: String,
-    required: true,
-    unique: true,
-    trim: true,
+    minlength: 2,
+    trim: true, 
   },
-  userId: {
+  category: {
+    //required: true,
     type: String,
-    required: true,
-    unique: true,
+    minlength: 2,
+    trim: true, 
+  },
+  residentType: {
+    //required: true,
+    type: String,
+    minlength: 2,
+    trim: true, 
   },
   gender: {
     type: String,
     enum: ['male', 'female', 'nonBinary', 'noReveal'],
+    default: null,
     // required: true,
   },
   age: {
     type: Number,
-    // required: true,
-  },
-  userCategory: {
-    type: String,
-    enum: ['student', 'employee', 'parent', 'relative'],
-    // required: true,
-  },
-  residenceType: {
-    type: String,
-    enum: ['onCampus', 'offCampus'],
+    default: null,
     // required: true,
   },
   employmentType: {
     type: String,
     enum: ['permanent', 'contract', 'intern'],
+    default: null,
     // required: true,
   },
   employmentCategory: {
     type: String,
     enum: ['technical', 'research', 'admin', 'school', 'other'],
+    default: null,
     // required: true,
   },
   childrenDetails: {
     type: [Number],
     default: [],
   },
-  error: {
-    type: String,
-    default: null,
-  },
-  isLoading: {
-    type: Boolean,
-    default: false,
+  number : {
+      required: true,
+      type: Number,
+      unique: true,
+      trim: true, 
+      // validate: {
+      //   validator: (value) => {
+      //     const numberString = value.toString();
+      //     if (numberString.length === 12 && numberString.startsWith("91")) {
+      //       // Ignore the first two digits (country code) if it's '91'
+      //       return /^[0-9]{10}$/.test(numberString.slice(2));
+      //     }
+      //     // Otherwise, ensure it is exactly 10 digits
+      //     return /^[0-9]{10}$/.test(numberString);
+      //   },
+      //   message: "Please enter a valid 10-digit mobile number",
+      // },
   },
 }, { versionKey: false });
 
-const User = mongoose.model("User", userSchema);
+  const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+  module.exports = User;
