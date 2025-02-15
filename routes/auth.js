@@ -121,6 +121,7 @@ authRouter.get("/profile", JWTAuthenticator, async (req, res) => {
 })
 
 authRouter.post("/directLogin", async (req, res) => {
+  console.log(req.body)
   try {
     const {number} = req.body;
     const user = await User.find({number: number}); // Find the user by ID
@@ -132,12 +133,15 @@ authRouter.post("/directLogin", async (req, res) => {
     // Return the specific user data
     res.status(200).json(user);
   } catch (err) {
+    console.log(err.message);
     console.error("Get User Error:", err.message);
     res.status(500).json({ error: err.message });
   }
 })
 
-authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
+authRouter.post("/login/details", 
+  JWTAuthenticator,
+   async (req, res) => {
   console.log(req.body);
   try {
     const { category, residenceType,gender,
@@ -155,7 +159,7 @@ authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
 
     // Find the user by ID and update their profile
     let user = await User.findById(userId);
-    console.log(user);
+    console.log(userId, req.userId);
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
