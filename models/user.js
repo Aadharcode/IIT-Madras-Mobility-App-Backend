@@ -21,6 +21,30 @@ const userSchema = mongoose.Schema({
   },
   gender: {
     type: String,
+<<<<<<< HEAD
+    minlength: 2,
+    trim: true,
+  },
+  employmentType: {
+    type: String,
+    minlength: 2,
+    trim: true,
+  },
+  employmentCategory: {
+    type: String,
+    minlength: 2,
+    trim: true,
+  },
+  childrenDetails: {
+    type: String,
+    
+    trim: true,
+  },
+  age: {
+    type: Number,
+    
+    trim: true,
+=======
     enum: ['male', 'female', 'nonBinary', 'noReveal'],
     default: null,
     // required: true,
@@ -45,6 +69,7 @@ const userSchema = mongoose.Schema({
   childrenDetails: {
     type: [Number],
     default: [],
+>>>>>>> c0c35b6b6e59f9138993145e734eea9c692e032c
   },
   number : {
       required: true,
