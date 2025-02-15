@@ -19,6 +19,31 @@ const userSchema = mongoose.Schema({
     minlength: 2,
     trim: true, 
   },
+  gender: {
+    type: String,
+    minlength: 2,
+    trim: true,
+  },
+  employmentType: {
+    type: String,
+    minlength: 2,
+    trim: true,
+  },
+  employmentCategory: {
+    type: String,
+    minlength: 2,
+    trim: true,
+  },
+  childrenDetails: {
+    type: String,
+    
+    trim: true,
+  },
+  age: {
+    type: Number,
+    
+    trim: true,
+  },
   number : {
       required: true,
       type: Number,

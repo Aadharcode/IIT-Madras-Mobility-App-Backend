@@ -120,16 +120,38 @@ authRouter.get("/profile", JWTAuthenticator, async (req, res) => {
   }
 })
 
+authRouter.post("/directLogin", async (req, res) => {
+  try {
+    const {number} = req.body;
+    const user = await User.find({number: number}); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Return the specific user data
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Get User Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+})
+
 authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
   console.log(req.body);
   try {
-    const { category, residenceType } = req.body;
+    const { category, residenceType,gender,
+   
+    employmentType,
+    employmentCategory,
+    childrenDetails,
+    age } = req.body;
     const userId =  req.userId; // Extract user ID from the JWT token
 
     // Validate the inputs
-    if (!category || !residenceType) {
-      return res.status(400).json({ msg: "Category and residenceType are required" });
-    }
+    // if (!category || !residenceType) {
+    //   return res.status(400).json({ msg: "Category and residenceType are required" });
+    // }
 
     // Find the user by ID and update their profile
     let user = await User.findById(userId);
@@ -142,6 +164,11 @@ authRouter.post("/login/details", JWTAuthenticator, async (req, res) => {
     // Update the user's profile fields
     user.category = category;
     user.residentType = residenceType;
+    user.gender = gender;
+    useremploymentType = employmentType;
+    user.employmentCategory= employmentCategory;
+    user.childrenDetails = childrenDetails;
+    user.age = age;
 
     // Save the updated user data
     user = await user.save();
