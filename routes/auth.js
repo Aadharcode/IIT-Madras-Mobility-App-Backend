@@ -18,7 +18,11 @@ const sendOtp = async (number) => {
   const data = await response.json();
   return data;}
   else{
-    return {Message:"Application in development mode use development OTP"};
+    return {
+      Status: "Success",
+      Details: "dev_session_123", // Providing a mock session ID
+      Message: "Application in development mode. Use OTP: 123456",
+    };
   }
 };
 
@@ -144,12 +148,16 @@ authRouter.post("/login/details",
    async (req, res) => {
   console.log(req.body);
   try {
-    const { category, residenceType,gender,
-   
-    employmentType,
-    employmentCategory,
-    childrenDetails,
-    age } = req.body;
+    const { 
+      category, 
+      name,  
+      residentType, 
+      gender, 
+      age, 
+      employmentType, 
+      employmentCategory, 
+      childrenDetails
+     } = req.body;
     const userId =  req.userId; // Extract user ID from the JWT token
 
     // Validate the inputs
@@ -166,14 +174,21 @@ authRouter.post("/login/details",
     }
 
     // Update the user's profile fields
-    user.category = category;
-    user.residentType = residenceType;
-    user.gender = gender;
-    useremploymentType = employmentType;
-    user.employmentCategory= employmentCategory;
-    user.childrenDetails = childrenDetails;
-    user.age = age;
-
+    // user.category = category;
+    // user.residentType = residenceType;
+    const updates = {};
+    if (name) updates.name = name;
+    if (category) updates.category = category;
+    if (residentType) updates.residentType = residentType;
+    if (gender) updates.gender = gender;
+    if (age !== undefined) updates.age = age;
+    if (employmentType) updates.employmentType = employmentType;
+    if (employmentCategory) updates.employmentCategory = employmentCategory;
+    if (childrenDetails) updates.childrenDetails = childrenDetails;
+    // if (number) updates.number = number; 
+    Object.keys(updates).forEach((key) => {
+      user[key] = updates[key];
+    });
     // Save the updated user data
     user = await user.save();
     console.log(user);

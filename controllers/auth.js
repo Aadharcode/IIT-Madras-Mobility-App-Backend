@@ -3,7 +3,6 @@ require("dotenv").config();
 
 const JWTAuthenticator = (req,res,next) => {
     const token = req.header("Authorization")?.replace("Bearer ","");
-    console.log(token);
     if(!token){
         console.log("check");
         return res.status(401).json({message:"Authorization token is required"});
