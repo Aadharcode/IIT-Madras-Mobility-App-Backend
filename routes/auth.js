@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const fetch = require("node-fetch");
 const User = require("../models/user");
+const JWTAuthenticator = require("../controllers/auth");
 require("dotenv").config();
 
 const authRouter = express.Router();
@@ -11,12 +12,17 @@ const is_prod = process.env.NODE_ENV === 'PRODUCTION';
 
 // Helper function to send OTP
 const sendOtp = async (number) => {
+  console.log(number);
   if(is_prod){const otpUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${number}/AUTOGEN`;
   const response = await fetch(otpUrl);
   const data = await response.json();
   return data;}
   else{
-    return {Message:"Application in development mode use development OTP"};
+    return {
+      Status: "Success",
+      Details: "dev_session_123", // Providing a mock session ID
+      Message: "Application in development mode. Use OTP: 123456",
+    };
   }
 };
 
@@ -42,6 +48,7 @@ authRouter.get("/", (req, res) => {
 
 // Signup route
 authRouter.post("/login", async (req, res) => {
+  console.log(req);
   try {
     const { number } = req.body;
     if (!number) {
@@ -71,6 +78,7 @@ authRouter.post("/login/verify", async (req, res) => {
     const data = await verifyOtp(number, otp);
 
     if (data.Status === "Success" && data.Details === "OTP Matched") {
+    // if(otp == 123456){
       let user = await User.findOne({ number });
       if (!user) {
         user = new User({ number ,name });
@@ -99,4 +107,101 @@ authRouter.get("/users", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 module.exports = authRouter
+=======
+authRouter.get("/profile", JWTAuthenticator, async (req, res) => {
+  try {
+    const userId = req.userId; // Extract user ID from token
+    const user = await User.findById(userId); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Return the specific user data
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Get User Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+})
+
+authRouter.post("/directLogin", async (req, res) => {
+  console.log(req.body)
+  try {
+    const {number} = req.body;
+    const user = await User.find({number: number}); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Return the specific user data
+    res.status(200).json(user);
+  } catch (err) {
+    console.log(err.message);
+    console.error("Get User Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+})
+
+authRouter.post("/login/details", 
+  JWTAuthenticator,
+   async (req, res) => {
+  console.log(req.body);
+  try {
+    const { 
+      category, 
+      name,  
+      residentType, 
+      gender, 
+      age, 
+      employmentType, 
+      employmentCategory, 
+      childrenDetails
+     } = req.body;
+    const userId =  req.userId; // Extract user ID from the JWT token
+
+    // Validate the inputs
+    // if (!category || !residenceType) {
+    //   return res.status(400).json({ msg: "Category and residenceType are required" });
+    // }
+
+    // Find the user by ID and update their profile
+    let user = await User.findById(userId);
+    console.log(userId, req.userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Update the user's profile fields
+    // user.category = category;
+    // user.residentType = residenceType;
+    const updates = {};
+    if (name) updates.name = name;
+    if (category) updates.category = category;
+    if (residentType) updates.residentType = residentType;
+    if (gender) updates.gender = gender;
+    if (age !== undefined) updates.age = age;
+    if (employmentType) updates.employmentType = employmentType;
+    if (employmentCategory) updates.employmentCategory = employmentCategory;
+    if (childrenDetails) updates.childrenDetails = childrenDetails;
+    // if (number) updates.number = number; 
+    Object.keys(updates).forEach((key) => {
+      user[key] = updates[key];
+    });
+    // Save the updated user data
+    user = await user.save();
+    console.log(user);
+    // Return the updated user profile
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error("Profile Update Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = authRouter;
+>>>>>>> 9f0595ec89656d3ea87d27c0c0d361e6b5eff4af

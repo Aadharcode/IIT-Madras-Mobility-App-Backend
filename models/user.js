@@ -7,6 +7,47 @@ const userSchema = mongoose.Schema({
     minlength: 2,
     trim: true, 
   },
+  category: {
+    //required: true,
+    type: String,
+    minlength: 2,
+    trim: true, 
+  },
+  residentType: {
+    //required: true,
+    type: String,
+    minlength: 2,
+    trim: true, 
+  },
+  gender: {
+    type: String,
+
+    enum: ['male', 'female', 'nonBinary', 'noReveal'],
+    default: null,
+    // required: true,
+  },
+  age: {
+    type: Number,
+    default: null,
+    // required: true,
+  },
+  employmentType: {
+    type: String,
+    enum: ['permanent', 'contract', 'intern'],
+    default: null,
+    // required: true,
+  },
+  employmentCategory: {
+    type: String,
+    enum: ['technical', 'research', 'admin', 'school', 'other'],
+    default: null,
+    // required: true,
+  },
+  childrenDetails: {
+    type: [Number],
+    default: [],
+
+  },
   number : {
       required: true,
       type: Number,

@@ -16,6 +16,7 @@ const signinVerify = async (req, res) => {
       const data = await response.json();
       console.log(data)  ;  
       if (data.Status === "Success" && data.Details === "OTP Matched") {
+      // if(otp == 123456){
         console.log("OTP verified successfully");
         const token = jwt.sign({ id: user._id }, "passwordKEY");
         res.status(200).json({ token, ...user._doc });
