@@ -107,9 +107,8 @@ authRouter.get("/users", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-module.exports = authRouter
-=======
+
+
 authRouter.get("/profile", JWTAuthenticator, async (req, res) => {
   try {
     const userId = req.userId; // Extract user ID from token
@@ -204,4 +203,4 @@ authRouter.post("/login/details",
 });
 
 module.exports = authRouter;
->>>>>>> 9f0595ec89656d3ea87d27c0c0d361e6b5eff4af
+
