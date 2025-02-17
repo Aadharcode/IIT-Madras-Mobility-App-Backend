@@ -99,4 +99,4 @@ authRouter.get("/users", async (req, res) => {
   }
 });
 
-module.exports = authRouter;
+module.exports = authRouter
