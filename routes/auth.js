@@ -13,33 +13,19 @@ const is_prod = process.env.NODE_ENV === 'PRODUCTION';
 // Helper function to send OTP
 const sendOtp = async (number) => {
   console.log(number);
-  if(is_prod){const otpUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${number}/AUTOGEN`;
+  const otpUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${number}/AUTOGEN`;
   const response = await fetch(otpUrl);
   const data = await response.json();
-  return data;}
-  else{
-    return {
-      Status: "Success",
-      Details: "dev_session_123", // Providing a mock session ID
-      Message: "Application in development mode. Use OTP: 123456",
-    };
-  }
+  return data;
 };
 
 // Helper function to verify OTP
 const verifyOtp = async (number, otp) => {
-  if(is_prod){
-    const verifyUrl = `https://2factor.in/API/V1/${apiKey}/SMS/VERIFY3/+91${number}/${otp}`;
-    const response = await fetch(verifyUrl);
-    const data = await response.json();
-    console.log(data)
-    return data;
-  }
-  else{
-    if(otp !== "123456") 
-      return {Status:"Error",Details:"OTP Mismatch"};
-    return {Status:"Success",Details:"OTP Matched"};
-  }
+  const verifyUrl = `https://2factor.in/API/V1/${apiKey}/SMS/VERIFY3/+91${number}/${otp}`;
+  const response = await fetch(verifyUrl);
+  const data = await response.json();
+  console.log(data)
+  return data;
 };
 
 authRouter.get("/", (req, res) => {
@@ -78,7 +64,6 @@ authRouter.post("/login/verify", async (req, res) => {
     const data = await verifyOtp(number, otp);
 
     if (data.Status === "Success" && data.Details === "OTP Matched") {
-    // if(otp == 123456){
       let user = await User.findOne({ number });
       if (!user) {
         user = new User({ number ,name });
